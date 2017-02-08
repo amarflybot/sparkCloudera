@@ -30,38 +30,11 @@ public class WordCount{
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         // read in text file and split each document into words
-        JavaRDD<String> textFile = sc.textFile(args[0]);
-        JavaRDD<String> words = textFile.flatMap(new FlatMapFunction<String, String>() {
-
-            @Override
-                public Iterable<String> call(String s) throws Exception {
-                    return Arrays.asList(s.split(" "));
-
-            }
-        });
-
-        // count the occurrence of each word
-        JavaPairRDD<String, Integer> counts = words.mapToPair(new PairFunction<String, String, Integer>() {
-            public Tuple2<String, Integer> call(String s) throws Exception {
-                return new Tuple2<String, Integer>(s, 1);
-            }
-        }).reduceByKey(new Function2<Integer, Integer, Integer>() {
-            public Integer call(Integer integer, Integer integer2) throws Exception {
-                return integer + integer2;
-            }
-        });
-
-        // count characters
-
-        Iterator<Tuple2<String, Integer>> iterator = counts.collect().iterator();
-        while (iterator.hasNext()){
-            Tuple2<String, Integer> tuple2 = iterator.next();
-            System.out.println(tuple2._1() + "  "+ tuple2._2());
-        }
-
-        //.forEach(action-> logger.info(action._1() + "  " + action._2()));
-
-        //counts.saveAsTextFile("/mnt/555D33F16C69C1B3/sandbox/sparktest/target/save");
+        String arg = args[0];
+        WordCountService wordCountService = new WordCountService();
+        //wordCountService.test(sc, arg);
+        WordCountController wordCountController =
+                new WordCountController(wordCountService, sc, arg);
 
     }
 }
